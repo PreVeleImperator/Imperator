@@ -1,6 +1,7 @@
 #include <unordered_map>
 #include "Pieces.h"
 #include "Search.h"
+using namespace Search;
 
 
 static void ToMove (string &fen)
@@ -13,39 +14,37 @@ static void Board (string &fen)
 {
 	fill (board , board  + 64, NO_PIECE);
 
-	int squareI = 0;
+	int square = 0;
 
 	for (int ch = 0; true; ch ++)
 	{
-		uint64_t squareU = (1ULL << squareI);
-
 		switch (fen [ch])
 		{
-			case 'P': board [squareI ++] = PAWN   [WHITE]; break;
-			case 'R': board [squareI ++] = ROOK   [WHITE]; break;
-			case 'N': board [squareI ++] = KNIGHT [WHITE]; break;
-			case 'B': board [squareI ++] = BISHOP [WHITE]; break;
-			case 'Q': board [squareI ++] = QUEEN  [WHITE]; break;
-			case 'K': board [squareI ++] = KING   [WHITE]; break;
+			case 'P': board [square ++] = PAWN   [WHITE]; break;
+			case 'R': board [square ++] = ROOK   [WHITE]; break;
+			case 'N': board [square ++] = KNIGHT [WHITE]; break;
+			case 'B': board [square ++] = BISHOP [WHITE]; break;
+			case 'Q': board [square ++] = QUEEN  [WHITE]; break;
+			case 'K': board [square ++] = KING   [WHITE]; break;
 
-			case 'p': board [squareI ++] = PAWN   [BLACK]; break;
-			case 'r': board [squareI ++] = ROOK   [BLACK]; break;
-			case 'n': board [squareI ++] = KNIGHT [BLACK]; break;
-			case 'b': board [squareI ++] = BISHOP [BLACK]; break;
-			case 'q': board [squareI ++] = QUEEN  [BLACK]; break;
-			case 'k': board [squareI ++] = KING   [BLACK]; break;
+			case 'p': board [square ++] = PAWN   [BLACK]; break;
+			case 'r': board [square ++] = ROOK   [BLACK]; break;
+			case 'n': board [square ++] = KNIGHT [BLACK]; break;
+			case 'b': board [square ++] = BISHOP [BLACK]; break;
+			case 'q': board [square ++] = QUEEN  [BLACK]; break;
+			case 'k': board [square ++] = KING   [BLACK]; break;
 
-			case '1': squareI += 1; break;
-			case '2': squareI += 2; break;
-			case '3': squareI += 3; break;
-			case '4': squareI += 4; break;
-			case '5': squareI += 5; break;
-			case '6': squareI += 6; break;
-			case '7': squareI += 7; break;
-			case '8': squareI += 8; break;
+			case '1': square += 1; break;
+			case '2': square += 2; break;
+			case '3': square += 3; break;
+			case '4': square += 4; break;
+			case '5': square += 5; break;
+			case '6': square += 6; break;
+			case '7': square += 7; break;
+			case '8': square += 8; break;
 		}
 
-		if (squareI == 64)
+		if (square == 64)
 		{
 			fen.erase (0, ch + 2);
 			return;
@@ -85,7 +84,7 @@ static void Enpassant (string &fen)
 		return;
 	}
 
-	enpassantAtStart = (fen [0] - 'a') + (7 - (fen [1] - '1')) * 8;
+	enpassantAtStart = 1ULL << ((fen [0] - 'a') + (7 - (fen [1] - '1')) * 8);
 	fen.erase (0, 3);
 }
 
@@ -112,7 +111,7 @@ static void PiecesPositions ()
 
 		if (piece != NO_PIECE)
 		{
-			uint64_t squareU = 1ULL << piece;
+			uint64_t squareU = 1ULL << squareI;
 
 			pieces [piece             ] |= squareU;
 			pieces [PIECES [piece % 2]] |= squareU;

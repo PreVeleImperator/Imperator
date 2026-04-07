@@ -1,6 +1,8 @@
+#pragma warning (disable : 4146)
+
 #include <iostream>
 #include <string>
-
+#include <bit>
 #include "Pieces.h"
 #include "Coordinates.h"
 #include "Search.h"
@@ -8,19 +10,26 @@
 #include "Pieces moves.h"
 #include "Xoshiro256.h"
 using namespace std;
+using namespace PiecesMoves;
+using namespace Search;
 
 int main ()
 {
-	Xoshiro256Seed (0xDEADBEEFCAFEBABEULL);
+	Xoshiro256Seed (0x123456789ABCDEF);
 
-	/*string fen;
-	cout << "FEN: ";
-	getline (cin, fen);
+	GenerateNonSlidingMoves (knightDirections, knightBorders, 8);
 
-	Fen (fen);
-	DisplayBoard (toMoveAtStart, enpassantAtStart, fiftyMovesAtStart);*/
+	/*while (true)
+	{
+		string fen;
+		cout << "FEN: ";
+		getline (cin, fen);
 
-	PiecesMoves::GenerateMagics (PiecesMoves::bishopCombinations, PiecesMoves::bishopShifts, PiecesMoves::bishopCombinationsCounts, PiecesMoves::bishopOffsets);
+		system ("cls");
+
+		Fen (fen);
+		DisplayBoard (toMoveAtStart, enpassantAtStart, fiftyMovesAtStart);
+	}*/
 
 	return 0;
 }

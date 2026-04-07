@@ -30,4 +30,4 @@ uint64_t pieces [15];
 
 
 void Fen          (string fen);
-void DisplayBoard (bool toMove, int enpassant, int fiftyMoves);
+void DisplayBoard (bool toMove, uint64_t enpassant, int fiftyMoves);

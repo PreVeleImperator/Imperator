@@ -1,10 +1,12 @@
+#include <bit>
 #include "Pieces.h"
 #include "Search.h"
 #include "Coordinates.h"
 using namespace std;
+using namespace Search;
 
 
-static void DisplayFen (bool toMove, int enpassant, int fiftyMoves)
+static void DisplayFen (bool toMove, uint64_t enpassant, int fiftyMoves)
 {
 	// board
 	{
@@ -65,7 +67,7 @@ static void DisplayFen (bool toMove, int enpassant, int fiftyMoves)
 	{
 		if (enpassant)
 		{
-			cout << Coordinates (enpassant) << " ";
+			cout << Coordinates (countr_zero (enpassant)) << " ";
 		}
 		else
 		{
@@ -81,7 +83,7 @@ static void DisplayFen (bool toMove, int enpassant, int fiftyMoves)
 	cout << "\n";
 }
 
-void DisplayBoard (bool toMove, int enpassant, int fiftyMoves)
+void DisplayBoard (bool toMove, uint64_t enpassant, int fiftyMoves)
 {
 	DisplayFen (toMove, enpassant, fiftyMoves);
 	cout << material << "\n";

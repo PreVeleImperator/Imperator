@@ -49,11 +49,13 @@ void PiecesMoves::GenerateCombinations (const int directions [], const uint64_t 
 			}
 		}
 
+		Bits::Display (occupancy);
+		cin.get ();
+
 		Recursion (occupancy, 0, combinations, writtenCombsCount);
 	}
 
 
-	cout << writtenCombsCount << "\n";
 	ofstream o (fileName);
 
 	o << "const uint64_t " << arrayName << " [] = {" << "\n    ";
@@ -67,7 +69,6 @@ void PiecesMoves::GenerateCombinations (const int directions [], const uint64_t 
 	}
 
 	o << "\n};";
-
 
 	delete [] combinations;
 }

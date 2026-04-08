@@ -1,7 +1,7 @@
 #include "Pieces moves.h"
 #include "Bits.h";
 
-void PiecesMoves::GenerateNonSlidingMoves (const int directions [], const uint64_t borders [], const int directionsCount)
+void GenerateNonSlidingMoves (const int directions [], const uint64_t borders [], const int directionsCount)
 {
 	for (int square = 0; square < 64; square ++)
 	{

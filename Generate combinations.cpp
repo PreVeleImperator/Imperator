@@ -22,7 +22,7 @@ static void Recursion (uint64_t occupancy, uint64_t combination, uint64_t combin
 	Recursion (rest, combination      , combinations, writtenCombsCount);
 }
 
-void PiecesMoves::GenerateCombinations (const int directions [], const uint64_t borders [], const int combinationsCount, string fileName, string arrayName)
+void GenerateCombinations (const int directions [], const uint64_t borders [], const int combinationsCount, string fileName, string arrayName)
 {
 	auto combinations      = new uint64_t [combinationsCount];
 	int  writtenCombsCount = 0;

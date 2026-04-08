@@ -3,7 +3,6 @@
 #include "Search.h"
 #include "Coordinates.h"
 using namespace std;
-using namespace Search;
 
 
 static void DisplayFen (bool toMove, uint64_t enpassant, int fiftyMoves)

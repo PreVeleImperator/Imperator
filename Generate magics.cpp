@@ -25,7 +25,7 @@ static bool Validation (uint64_t magic, const uint64_t combinations [], const in
 	return true;
 }
 
-void PiecesMoves::GenerateMagics (const uint64_t combinations [], const int shifts [], const int combinationsCounts [], const int offsets [])
+void GenerateMagics (const uint64_t combinations [], const int shifts [], const int combinationsCounts [], const int offsets [])
 {
 	for (int square = 0; square < 64; square ++)
 		while (true)

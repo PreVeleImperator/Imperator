@@ -1,12 +1,11 @@
 #include <unordered_map>
 #include "Pieces.h"
 #include "Search.h"
-using namespace Search;
 
 
 static void ToMove (string &fen)
 {
-	toMoveAtStart = (fen [0] == 'w') ? WHITE : BLACK;
+	playerToMoveAtStart = (fen [0] == 'w') ? WHITE : BLACK;
 	fen.erase (0, 2);
 }
 

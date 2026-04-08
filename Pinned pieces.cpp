@@ -1,0 +1,24 @@
+#pragma warning (disable : 4146)
+
+#include <bit>
+#include "Bits.h"
+#include "Search.h"
+#include "Pieces.h"
+#include "Pieces moves.h"
+
+static void Piece (uint64_t myKingU, uint64_t myPieces, uint64_t evilPieces, uint64_t pinnedPieces [], const uint64_t combinations [], const int offsets [], uint64_t Moves1 (int square), 
+				   uint64_t Moves2 (int square, uint64_t PieceException))
+{
+	
+}
+
+void PinnedPieces (bool playerToMove, uint64_t pinnedPieces [])
+{
+	bool opponent = !playerToMove;
+
+	uint64_t myKing   = pieces [KING   [playerToMove]];
+	uint64_t myPieces = pieces [PIECES [playerToMove]];
+
+	Piece (myKing, myPieces, pieces [ROOK   [opponent]] | pieces [QUEEN [opponent]], pinnedPieces,   rookCombinations,   rookOffsets,   RookMoves,   RookMoves);
+	Piece (myKing, myPieces, pieces [BISHOP [opponent]] | pieces [QUEEN [opponent]], pinnedPieces, bishopCombinations, bishopOffsets, BishopMoves, BishopMoves);
+}

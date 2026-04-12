@@ -52,12 +52,12 @@ static void SlidingPieces (uint64_t pieces, uint64_t Moves (int square, uint64_t
 
 void AttackedSquares (bool playerToMove, uint64_t &attackedSquares, bool &check, bool &doubleCheck, uint64_t &checkSquares)
 {
-	const uint64_t opponent = !playerToMove;
-	const uint64_t myKing   = pieces [KING [playerToMove]];
+	uint64_t opponent = !playerToMove;
+	uint64_t myKing   = pieces [KING [playerToMove]];
 
 	NonSlidingPieces (pieces [PAWN   [opponent]], pawnCaptMoves [opponent], myKing, attackedSquares, check, checkSquares);
 	NonSlidingPieces (pieces [KNIGHT [opponent]], knightMoves             , myKing, attackedSquares, check, checkSquares);
-	NonSlidingPieces (pieces [KING   [opponent]], kingMoves               , myKing, attackedSquares, check, checkSquares);
+	NonSlidingPieces (pieces [KING   [opponent]],   kingMoves             , myKing, attackedSquares, check, checkSquares);
 
 	SlidingPieces (pieces [ROOK   [opponent]] | pieces [QUEEN [opponent]],   RookMoves,   rookCombinations,   rookOffsets, myKing, attackedSquares, check, doubleCheck, checkSquares);
 	SlidingPieces (pieces [BISHOP [opponent]] | pieces [QUEEN [opponent]], BishopMoves, bishopCombinations, bishopOffsets, myKing, attackedSquares, check, doubleCheck, checkSquares);

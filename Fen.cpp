@@ -53,7 +53,9 @@ static void Board (string &fen)
 
 static void Castlings (string &fen)
 {
-	fill (castlings, castlings + 4, false);
+	kingMoved  [WHITE] = kingMoved  [BLACK] = true;
+	kRookMoved [WHITE] = kRookMoved [BLACK] = true;
+	qRookMoved [WHITE] = qRookMoved [BLACK] = true;
 
 	if (fen [0] == '-')
 	{
@@ -64,11 +66,11 @@ static void Castlings (string &fen)
 	for (auto i = 0; i <= 4; i ++)
 		switch (fen [i])
 		{
-			case 'K': castlings [K_SIDE [WHITE]] = true; break;
-			case 'Q': castlings [Q_SIDE [WHITE]] = true; break;
+			case 'K': kingMoved [WHITE] = kRookMoved [WHITE] = false; break;
+			case 'Q': kingMoved [WHITE] = qRookMoved [WHITE] = false; break;
 
-			case 'k': castlings [K_SIDE [BLACK]] = true; break;
-			case 'q': castlings [Q_SIDE [BLACK]] = true; break;
+			case 'k': kingMoved [BLACK] = kRookMoved [BLACK] = false; break;
+			case 'q': kingMoved [BLACK] = qRookMoved [BLACK] = false; break;
 
 			case ' ': fen.erase (0, i + 1); return;
 		}

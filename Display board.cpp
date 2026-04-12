@@ -53,10 +53,10 @@ static void DisplayFen (bool toMove, uint64_t enpassant, int fiftyMoves)
 	{
 		bool noCastling = true;
 
-		if (castlings [K_SIDE [WHITE]]) {cout << "K"; noCastling = false;}
-		if (castlings [Q_SIDE [WHITE]]) {cout << "Q"; noCastling = false;}
-		if (castlings [K_SIDE [BLACK]]) {cout << "k"; noCastling = false;}
-		if (castlings [Q_SIDE [BLACK]]) {cout << "q"; noCastling = false;}
+		if (!kingMoved [WHITE]  &&  !kRookMoved [WHITE]) {cout << "K"; noCastling = false;}
+		if (!kingMoved [WHITE]  &&  !qRookMoved [WHITE]) {cout << "Q"; noCastling = false;}
+		if (!kingMoved [BLACK]  &&  !kRookMoved [BLACK]) {cout << "k"; noCastling = false;}
+		if (!kingMoved [BLACK]  &&  !qRookMoved [BLACK]) {cout << "q"; noCastling = false;}
 	
 		if (noCastling) {cout << "- ";}
 		else            {cout << " " ;}

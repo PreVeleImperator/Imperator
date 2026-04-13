@@ -21,20 +21,11 @@ int main ()
 		cout << "FEN: ";
 		getline (cin, fen);
 
-
 		system ("cls");
 		Fen (fen);
 		DisplayBoard (playerToMoveAtStart, enpassantAtStart, fiftyMovesAtStart);
 
-
-		Move bestMove;
-		int  bestValue;
-
-		for (int depth = 1; depth < MAX_DEPTH; depth ++)
-		{
-			BestMove (bestMove, bestValue, depth);
-			cout << bestValue << " | " << Coordinates (bestMove.fromI) << Coordinates (bestMove.toI) << "\n";
-		}
+		Search ();
 	}
 
 	return 0;

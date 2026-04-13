@@ -1,0 +1,42 @@
+#include <string>
+#include "Search.h"
+#include "Coordinates.h"
+using namespace std;
+
+static string Value (int value)
+{
+	string v;
+	value = playerToMoveAtStart ? -value : value;
+
+	if (value >= -CHECKMATE - MAX_PLY)
+	{
+		v = "#" + to_string (-CHECKMATE - value);
+	}
+	else if (value <= CHECKMATE + MAX_PLY)
+	{
+		v = "#-" + to_string (-CHECKMATE + value);
+	}
+	else
+	{
+		v = to_string (value);
+	}
+
+	return v;
+}
+
+void Search ()
+{
+	Move bestMove;
+
+	for (int depth = 1; depth < MAX_PLY; depth ++)
+	{
+		int value = BestMove (bestMove, depth);
+
+		cout << depth << " | " << Value (value) << " | ";
+
+		for (int ply = 0; ply < pvLength [0]; ply ++)
+			cout << Coordinates (pv [0] [ply] [FROM]) << Coordinates (pv [0] [ply] [TO]) << " ";
+
+		cout << "\n";
+	}
+}

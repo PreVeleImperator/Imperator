@@ -84,8 +84,8 @@ uint64_t BishopMoves (int square)
 	int offset = bishopOffsets [square];
 
 	uint64_t occupancy = pieces [ALL_PIECES] & bishopCombinations [offset];
-	uint64_t magic = bishopMagics [square];
-	uint64_t index = (occupancy * magic) >> bishopShifts [square];
+	uint64_t magic     = bishopMagics [square];
+	uint64_t index     = (occupancy * magic) >> bishopShifts [square];
 
 	return bishopMoves [offset + index];
 }
@@ -95,8 +95,8 @@ uint64_t BishopMoves (int square, uint64_t occupancyException)
 	int offset = bishopOffsets [square];
 
 	uint64_t occupancy = (pieces [ALL_PIECES] & ~occupancyException) & bishopCombinations [offset];
-	uint64_t magic = bishopMagics [square];
-	uint64_t index = (occupancy * magic) >> bishopShifts [square];
+	uint64_t magic     = bishopMagics [square];
+	uint64_t index     = (occupancy * magic) >> bishopShifts [square];
 
 	return bishopMoves [offset + index];
 }

@@ -1,14 +1,8 @@
 #include "Search.h"
 #include "Pieces.h"
 
-int Alfabeta (bool playerToMove, int ply, int depth, int alfa, int beta)
+int Alfabeta (bool player, bool opponent, uint64_t enpassant, int ply, int depth, int alfa, int beta)
 {
-	if (depth <= 0)
-	{
-		return PositionValue (playerToMove);
-	}
-
-
 	uint64_t pinnedPieces [64];
 	uint64_t attackedSquares = 0;
 	uint64_t    checkSquares = FULL_UINT;
@@ -20,31 +14,45 @@ int Alfabeta (bool playerToMove, int ply, int depth, int alfa, int beta)
 
 	Move moves [250];
 
-
 	fill (pinnedPieces, pinnedPieces + 64, FULL_UINT);
 
 
-	AttackedSquares (playerToMoveAtStart, attackedSquares, check, doubleCheck, checkSquares);
-	PinnedPieces    (playerToMoveAtStart, pinnedPieces, doubleCheck);
+	AttackedSquares (player, opponent, attackedSquares, check, doubleCheck, checkSquares);
+	PinnedPieces    (player, opponent, pinnedPieces   , check, doubleCheck, checkSquares);
 
-	GenerateMoves (playerToMoveAtStart, enpassantAtStart, doubleCheck, checkSquares, pinnedPieces, attackedSquares, moves, movesCount);
+	GenerateMoves (player, opponent, enpassant, doubleCheck, checkSquares, pinnedPieces, attackedSquares, moves, movesCount);
+
+
+	if (int value = GameEnd (ply, check, movesCount); value != NO_END)
+	{
+		pvLength [ply] = ply;
+		return value;
+	}
+
+	if (depth <= 0)
+	{
+		pvLength [ply] = ply;
+		return Evaluate (player);
+	}
 
 
 	for (int i = 0; i < movesCount; i ++)
 	{
 		Move &move = moves [i];
 
-		MakeMove (playerToMoveAtStart, move);
+		MakeMove (player, opponent, move);
 
-		int value = -Alfabeta (!playerToMove, ply + 1, depth - 1, -beta, -alfa);
+		int value = -Alfabeta (opponent, player, 0, ply + 1, depth - 1, NO_MOVE, -alfa);
 
-		UnmakeMove (playerToMoveAtStart, move);
+		UnmakeMove (player, opponent, move);
 
 		if (value > alfa)
 		{
+			PvEntry (ply, move.fromI, move.toI, move.type);
 			alfa = value;
 		}
 	}
+
 
 	return alfa;
 }

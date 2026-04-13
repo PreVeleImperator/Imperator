@@ -11,19 +11,51 @@
 #include "Bits.h";
 
 
-static void Pawn (bool playerToMove, uint64_t checkSquares, uint64_t pinnedPieces [], Move moves [], int &movesCount)
+static void PromotingPawns (bool player, bool opponent, uint64_t pawns, uint64_t checkSquares, uint64_t pinnedPieces [], Move moves [], int &movesCount)
 {
-	uint64_t pawns    = pieces [PAWN [playerToMove]];
-	uint64_t opponent = !playerToMove;
-
 	for (; pawns; pawns &= pawns - 1)
 	{
 		uint64_t fromU = pawns & -pawns;
 		int      fromI = countr_zero (fromU);
-		int      piece = PAWN [playerToMove];
+		int      piece = PAWN [player];
 
-		uint64_t pieceMoves  =     pawnMoves [playerToMove] [fromI] & ~pieces [ALL_PIECES];
-		         pieceMoves |= pawnCaptMoves [playerToMove] [fromI] &  pieces [PIECES [opponent]];
+		uint64_t pieceMoves  =     pawnMoves [player] [fromI] & ~pieces [ALL_PIECES];
+		         pieceMoves |= pawnCaptMoves [player] [fromI] &  pieces [PIECES [opponent]];
+				 pieceMoves &= checkSquares & pinnedPieces [fromI];
+
+		
+
+		for (; pieceMoves; pieceMoves &= pieceMoves - 1)
+			for (int type = 0; type < 4; type ++)
+			{
+				Move &move = moves [movesCount ++];
+
+				uint64_t toU = pieceMoves & -pieceMoves;
+				uint64_t toI = countr_zero (toU);
+
+				move.fromU = fromU;
+				move.fromI = fromI;
+
+				move.toU = toU;
+				move.toI = toI;
+
+				move.type          = Q_PROMOTION + type;
+				move.piece         = piece;
+				move.capturedPiece = board [toI];
+			}
+	}
+}
+
+static void OtherPawns (bool player, bool opponent, uint64_t pawns, uint64_t checkSquares, uint64_t pinnedPieces [], Move moves [], int &movesCount)
+{
+	for (; pawns; pawns &= pawns - 1)
+	{
+		uint64_t fromU = pawns & -pawns;
+		int      fromI = countr_zero (fromU);
+		int      piece = PAWN [player];
+
+		uint64_t pieceMoves  =     pawnMoves [player] [fromI] & ~pieces [ALL_PIECES];
+		         pieceMoves |= pawnCaptMoves [player] [fromI] &  pieces [PIECES [opponent]];
 				 pieceMoves &= checkSquares & pinnedPieces [fromI];
 
 		for (; pieceMoves; pieceMoves &= pieceMoves - 1)
@@ -46,25 +78,25 @@ static void Pawn (bool playerToMove, uint64_t checkSquares, uint64_t pinnedPiece
 	}
 }
 
-static void Rook (bool playerToMove, uint64_t checkSquares, uint64_t pinnedPieces [], Move moves [], int &movesCount)
+static void Rooks (bool player, uint64_t checkSquares, uint64_t pinnedPieces [], Move moves [], int &movesCount)
 {
-	uint64_t rooks = pieces [ROOK [playerToMove]];
+	uint64_t rooks = pieces [ROOK [player]];
 
 	for (; rooks; rooks &= rooks - 1)
 	{
 		uint64_t fromU = rooks & -rooks;
 		int      fromI = countr_zero (fromU);
-		int      piece = ROOK [playerToMove];
+		int      piece = ROOK [player];
 		int      type;
 
-		uint64_t pieceMoves = (RookMoves (fromI) & ~pieces [PIECES [playerToMove]]) & checkSquares & pinnedPieces [fromI];
+		uint64_t pieceMoves = (RookMoves (fromI) & ~pieces [PIECES [player]]) & checkSquares & pinnedPieces [fromI];
 
 
-		if (!qRookMoved [playerToMove]  &&  fromU & 0x100000000000001)
+		if (!qRookMoved [player]  &&  fromU & 0x100000000000001)
 		{
 			type = FIRST_Q_ROOK_MOVE;
 		}
-		else if (!kRookMoved [playerToMove]  &&  fromU & 0x8000000000000080)
+		else if (!kRookMoved [player]  &&  fromU & 0x8000000000000080)
 		{
 			type = FIRST_K_ROOK_MOVE;
 		}
@@ -94,17 +126,17 @@ static void Rook (bool playerToMove, uint64_t checkSquares, uint64_t pinnedPiece
 	}
 }
 
-static void Knight (bool playerToMove, uint64_t checkSquares, uint64_t pinnedPieces [], Move moves [], int &movesCount)
+static void Knights (bool player, uint64_t checkSquares, uint64_t pinnedPieces [], Move moves [], int &movesCount)
 {
-	uint64_t knights = pieces [KNIGHT [playerToMove]];
+	uint64_t knights = pieces [KNIGHT [player]];
 
 	for (; knights; knights &= knights - 1)
 	{
 		uint64_t fromU = knights & -knights;
 		int      fromI = countr_zero (fromU);
-		int      piece = KNIGHT [playerToMove];
+		int      piece = KNIGHT [player];
 
-		uint64_t pieceMoves = (knightMoves [fromI] & ~pieces [PIECES [playerToMove]]) & checkSquares & pinnedPieces [fromI];
+		uint64_t pieceMoves = (knightMoves [fromI] & ~pieces [PIECES [player]]) & checkSquares & pinnedPieces [fromI];
 
 		for (; pieceMoves; pieceMoves &= pieceMoves - 1)
 		{
@@ -126,17 +158,17 @@ static void Knight (bool playerToMove, uint64_t checkSquares, uint64_t pinnedPie
 	}
 }
 
-static void Bishop (bool playerToMove, uint64_t checkSquares, uint64_t pinnedPieces [], Move moves [], int &movesCount)
+static void Bishops (bool player, uint64_t checkSquares, uint64_t pinnedPieces [], Move moves [], int &movesCount)
 {
-	uint64_t bishops = pieces [BISHOP [playerToMove]];
+	uint64_t bishops = pieces [BISHOP [player]];
 
 	for (; bishops; bishops &= bishops - 1)
 	{
 		uint64_t fromU = bishops & -bishops;
 		int      fromI = countr_zero (fromU);
-		int      piece = BISHOP [playerToMove];
+		int      piece = BISHOP [player];
 
-		uint64_t pieceMoves = (BishopMoves (fromI) & ~pieces [PIECES [playerToMove]]) & checkSquares & pinnedPieces [fromI];
+		uint64_t pieceMoves = (BishopMoves (fromI) & ~pieces [PIECES [player]]) & checkSquares & pinnedPieces [fromI];
 
 		for (; pieceMoves; pieceMoves &= pieceMoves - 1)
 		{
@@ -158,17 +190,17 @@ static void Bishop (bool playerToMove, uint64_t checkSquares, uint64_t pinnedPie
 	}
 }
 
-static void Queen (bool playerToMove, uint64_t checkSquares, uint64_t pinnedPieces [], Move moves [], int &movesCount)
+static void Queens (bool player, uint64_t checkSquares, uint64_t pinnedPieces [], Move moves [], int &movesCount)
 {
-	uint64_t queens = pieces [QUEEN [playerToMove]];
+	uint64_t queens = pieces [QUEEN [player]];
 
 	for (; queens; queens &= queens - 1)
 	{
 		uint64_t fromU = queens & -queens;
 		int      fromI = countr_zero (fromU);
-		int      piece = QUEEN [playerToMove];
+		int      piece = QUEEN [player];
 
-		uint64_t pieceMoves = ((RookMoves (fromI) | BishopMoves (fromI)) & ~pieces [PIECES [playerToMove]]) & checkSquares & pinnedPieces [fromI];
+		uint64_t pieceMoves = ((RookMoves (fromI) | BishopMoves (fromI)) & ~pieces [PIECES [player]]) & checkSquares & pinnedPieces [fromI];
 
 		for (; pieceMoves; pieceMoves &= pieceMoves - 1)
 		{
@@ -190,13 +222,13 @@ static void Queen (bool playerToMove, uint64_t checkSquares, uint64_t pinnedPiec
 	}
 }
 
-static void King (bool playerToMove, uint64_t attackedSquares, Move moves [], int &movesCount)
+static void King (bool player, uint64_t attackedSquares, Move moves [], int &movesCount)
 {
-	uint64_t fromU = pieces [KING [playerToMove]];
+	uint64_t fromU = pieces [KING [player]];
 	int      fromI = countr_zero (fromU);
-	int      piece = KING [playerToMove];
+	int      piece = KING [player];
 
-	uint64_t pieceMoves = (kingMoves [fromI] & ~pieces [PIECES [playerToMove]]) & ~attackedSquares;
+	uint64_t pieceMoves = (kingMoves [fromI] & ~pieces [PIECES [player]]) & ~attackedSquares;
 
 	for (; pieceMoves; pieceMoves &= pieceMoves - 1)
 	{
@@ -211,23 +243,29 @@ static void King (bool playerToMove, uint64_t attackedSquares, Move moves [], in
 		move.toU = toU;
 		move.toI = toI;
 
-		move.type          = kingMoved [playerToMove] ? MOVE : FIRST_KING_MOVE;
+		move.type          = kingMoved [player] ? MOVE : FIRST_KING_MOVE;
 		move.piece         = piece;
 		move.capturedPiece = board [toI];
 	}
 }
 
 
-void GenerateMoves (bool playerToMove, uint64_t enpassant, bool doubleCheck, uint64_t checkSquares, uint64_t pinnedPieces [], uint64_t attackedSquares, Move moves [], int &movesCount)
+void GenerateMoves (bool player, bool opponent, uint64_t enpassant, bool doubleCheck, uint64_t checkSquares, uint64_t pinnedPieces [], uint64_t attackedSquares, Move moves [], 
+					int &movesCount)
 {
 	if (!doubleCheck)
 	{
-		Pawn   (playerToMove, checkSquares, pinnedPieces, moves, movesCount);
-		Rook   (playerToMove, checkSquares, pinnedPieces, moves, movesCount);
-		Knight (playerToMove, checkSquares, pinnedPieces, moves, movesCount);
-		Bishop (playerToMove, checkSquares, pinnedPieces, moves, movesCount);
-		Queen  (playerToMove, checkSquares, pinnedPieces, moves, movesCount);
+		uint64_t promotingPawns = pieces [PAWN [player]] & promotionSquares [player];
+		uint64_t     otherPawns = pieces [PAWN [player]] ^ promotingPawns;
+
+		PromotingPawns (player, opponent, promotingPawns, checkSquares, pinnedPieces, moves, movesCount);
+		    OtherPawns (player, opponent,     otherPawns, checkSquares, pinnedPieces, moves, movesCount);
+
+		Rooks   (player, checkSquares, pinnedPieces, moves, movesCount);
+		Knights (player, checkSquares, pinnedPieces, moves, movesCount);
+		Bishops (player, checkSquares, pinnedPieces, moves, movesCount);
+		Queens  (player, checkSquares, pinnedPieces, moves, movesCount);
 	}
 
-	King (playerToMove, attackedSquares, moves, movesCount);
+	King (player, attackedSquares, moves, movesCount);
 }

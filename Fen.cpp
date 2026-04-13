@@ -6,6 +6,8 @@
 static void ToMove (string &fen)
 {
 	playerToMoveAtStart = (fen [0] == 'w') ? WHITE : BLACK;
+	    opponentAtStart = !playerToMoveAtStart;
+
 	fen.erase (0, 2);
 }
 

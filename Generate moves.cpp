@@ -7,8 +7,7 @@
 #include "Pieces.h"
 #include "Pieces moves.h"
 #include "Move struct.h"
-#include "Coordinates.h"
-#include "Bits.h";
+#include "Bits.h"
 
 
 static void PromotingPawns (bool player, bool opponent, uint64_t pawns, uint64_t checkSquares, uint64_t pinnedPieces [], Move moves [], int &movesCount)
@@ -23,15 +22,13 @@ static void PromotingPawns (bool player, bool opponent, uint64_t pawns, uint64_t
 		         pieceMoves |= pawnCaptMoves [player] [fromI] &  pieces [PIECES [opponent]];
 				 pieceMoves &= checkSquares & pinnedPieces [fromI];
 
-		
-
 		for (; pieceMoves; pieceMoves &= pieceMoves - 1)
 			for (int type = 0; type < 4; type ++)
 			{
 				Move &move = moves [movesCount ++];
 
 				uint64_t toU = pieceMoves & -pieceMoves;
-				uint64_t toI = countr_zero (toU);
+				int      toI = countr_zero (toU);
 
 				move.fromU = fromU;
 				move.fromI = fromI;
@@ -63,7 +60,7 @@ static void OtherPawns (bool player, bool opponent, uint64_t pawns, uint64_t che
 			Move &move = moves [movesCount ++];
 
 			uint64_t toU = pieceMoves & -pieceMoves;
-			uint64_t toI = countr_zero (toU);
+			     int toI = countr_zero (toU);
 
 			move.fromU = fromU;
 			move.fromI = fromI;
@@ -111,7 +108,7 @@ static void Rooks (bool player, uint64_t checkSquares, uint64_t pinnedPieces [],
 			Move &move = moves [movesCount ++];
 
 			uint64_t toU = pieceMoves & -pieceMoves;
-			uint64_t toI = countr_zero (toU);
+			     int toI = countr_zero (toU);
 
 			move.fromU = fromU;
 			move.fromI = fromI;
@@ -143,7 +140,7 @@ static void Knights (bool player, uint64_t checkSquares, uint64_t pinnedPieces [
 			Move &move = moves [movesCount ++];
 
 			uint64_t toU = pieceMoves & -pieceMoves;
-			uint64_t toI = countr_zero (toU);
+			     int toI = countr_zero (toU);
 
 			move.fromU = fromU;
 			move.fromI = fromI;
@@ -175,7 +172,7 @@ static void Bishops (bool player, uint64_t checkSquares, uint64_t pinnedPieces [
 			Move &move = moves [movesCount ++];
 
 			uint64_t toU = pieceMoves & -pieceMoves;
-			uint64_t toI = countr_zero (toU);
+			     int toI = countr_zero (toU);
 
 			move.fromU = fromU;
 			move.fromI = fromI;
@@ -207,7 +204,7 @@ static void Queens (bool player, uint64_t checkSquares, uint64_t pinnedPieces []
 			Move &move = moves [movesCount ++];
 
 			uint64_t toU = pieceMoves & -pieceMoves;
-			uint64_t toI = countr_zero (toU);
+			     int toI = countr_zero (toU);
 
 			move.fromU = fromU;
 			move.fromI = fromI;
@@ -235,7 +232,7 @@ static void King (bool player, uint64_t attackedSquares, Move moves [], int &mov
 		Move &move = moves [movesCount ++];
 
 		uint64_t toU = pieceMoves & -pieceMoves;
-		uint64_t toI = countr_zero (toU);
+		     int toI = countr_zero (toU);
 
 		move.fromU = fromU;
 		move.fromI = fromI;

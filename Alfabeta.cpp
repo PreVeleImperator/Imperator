@@ -1,8 +1,17 @@
+#include <Windows.h>
 #include "Search.h"
 #include "Pieces.h"
+#include "Pieces moves.h"
 
 int Alfabeta (bool player, bool opponent, uint64_t enpassant, int ply, int depth, int alfa, int beta)
 {
+	if (GetTickCount64 () - timeStart >= timeLimit)
+	{
+		timeStop = true;
+		return 0;
+	}
+
+
 	uint64_t pinnedPieces [64];
 	uint64_t attackedSquares = 0;
 	uint64_t    checkSquares = FULL_UINT;
@@ -38,13 +47,20 @@ int Alfabeta (bool player, bool opponent, uint64_t enpassant, int ply, int depth
 
 	for (int i = 0; i < movesCount; i ++)
 	{
+		if (timeStop)
+			return 0;
+
 		Move &move = moves [i];
 
 		MakeMove (player, opponent, move);
-
-		int value = -Alfabeta (opponent, player, 0, ply + 1, depth - 1, NO_MOVE, -alfa);
+		
+		int nextDepth = check ? depth : depth - 1;
+		int value     = -Alfabeta (opponent, player, 0, ply + 1, nextDepth, -beta, -alfa);
 
 		UnmakeMove (player, opponent, move);
+
+		if (value >= beta)
+			return beta;
 
 		if (value > alfa)
 		{

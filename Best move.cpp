@@ -1,8 +1,9 @@
+#include <Windows.h>
 #include "Search.h"
 #include "Pieces.h"
 #include "Bits.h"
 
-int BestMove (Move &bestMove, int depth)
+int BestMove (int depth)
 {
 	uint64_t pinnedPieces [64];
 	uint64_t attackedSquares = 0;
@@ -27,20 +28,22 @@ int BestMove (Move &bestMove, int depth)
 
 	for (int i = 0; i < movesCount; i ++)
 	{
+		if (GetTickCount64 () - timeStart >= timeLimit)
+			return 0;
+
 		Move &move = moves [i];
 
 		MakeMove (playerToMoveAtStart, opponentAtStart, move);
 
-		int value = -Alfabeta (opponentAtStart, playerToMoveAtStart, 0, 1, depth - 1, bestValue, -bestValue);
+		int nextDepth = check ? depth : depth - 1;
+		int value     = -Alfabeta (opponentAtStart, playerToMoveAtStart, 0, 1, nextDepth, NO_MOVE, -bestValue);
 
 		UnmakeMove (playerToMoveAtStart, opponentAtStart, move);
 		
 		if (value > bestValue)
 		{
 			PvEntry (0, move.fromI, move.toI, move.type);
-
 			bestValue = value;
-			bestMove  = move;
 		}
 	}
 

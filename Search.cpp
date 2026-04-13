@@ -1,6 +1,8 @@
 #include <string>
+#include <Windows.h>
 #include "Search.h"
-#include "Coordinates.h"
+#include "Pieces.h"
+#include "Bits.h"
 using namespace std;
 
 static string Value (int value)
@@ -26,13 +28,17 @@ static string Value (int value)
 
 void Search ()
 {
-	Move bestMove;
+	timeStart = GetTickCount64 ();
+	timeStop  = false;
 
 	for (int depth = 1; depth < MAX_PLY; depth ++)
 	{
-		int value = BestMove (bestMove, depth);
+		int value = BestMove (depth);
 
-		cout << depth << " | " << Value (value) << " | ";
+		if (timeStop)
+			return;
+
+		cout << depth << " | " << GetTickCount64 () - timeStart << " | " << Value (value) << " | ";
 
 		for (int ply = 0; ply < pvLength [0]; ply ++)
 			cout << Coordinates (pv [0] [ply] [FROM]) << Coordinates (pv [0] [ply] [TO]) << " ";

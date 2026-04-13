@@ -1,11 +1,10 @@
 #include <bit>
 #include "Pieces.h"
 #include "Search.h"
-#include "Coordinates.h"
 using namespace std;
 
 
-static void DisplayFen (bool toMove, uint64_t enpassant, int fiftyMoves)
+static void DisplayFen (bool player, uint64_t enpassant, int fiftyMoves)
 {
 	// board
 	{
@@ -45,8 +44,8 @@ static void DisplayFen (bool toMove, uint64_t enpassant, int fiftyMoves)
 
 	// to move
 	{
-		if (toMove == WHITE) {cout << "w ";}
-		if (toMove == BLACK) {cout << "b ";}
+		if (player == WHITE) {cout << "w ";}
+		if (player == BLACK) {cout << "b ";}
 	}
 
 	// castlings

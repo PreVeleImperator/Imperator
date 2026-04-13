@@ -1,6 +1,6 @@
 #pragma warning (disable : 4146)
 
-#include "Coordinates.h"
+#include "Pieces.h"
 
 string Coordinates (int square)
 {

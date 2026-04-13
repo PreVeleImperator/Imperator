@@ -4,7 +4,6 @@
 #include <string>
 #include <bit>
 #include "Pieces.h"
-#include "Coordinates.h"
 #include "Search.h"
 #include "Bits.h"
 #include "Pieces moves.h"
@@ -15,7 +14,7 @@ int main ()
 {
 	Xoshiro256Seed (0x123456789ABCDEF);
 
-	while (true)
+	while (false)
 	{
 		string fen;
 		cout << "FEN: ";
@@ -26,6 +25,7 @@ int main ()
 		DisplayBoard (playerToMoveAtStart, enpassantAtStart, fiftyMovesAtStart);
 
 		Search ();
+		cout << "\n";
 	}
 
 	return 0;

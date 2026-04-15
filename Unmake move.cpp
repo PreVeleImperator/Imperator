@@ -67,9 +67,9 @@ void UnmakeMove (bool player, bool opponent, Move &move)
 	board [fromI] = board [toI];
 	board [  toI] = capturedPiece;
 
-	pieces [piece                ] ^= fromTo;
+	pieces [piece          ] ^= fromTo;
 	pieces [PIECES [player]] ^= fromTo;
-	pieces [ALL_PIECES           ] ^= fromTo;
+	pieces [ALL_PIECES     ] ^= fromTo;
 
 
 	if (capturedPiece != NO_PIECE)
@@ -78,6 +78,7 @@ void UnmakeMove (bool player, bool opponent, Move &move)
 		pieces [PIECES [opponent]] ^= toU;
 		pieces [ALL_PIECES       ] ^= toU;
 
-		material += piecesValues [capturedPiece];
+		material               += piecesValues       [capturedPiece];
+		endgameRate [opponent] += endgameRateChanges [capturedPiece];
 	}
 }

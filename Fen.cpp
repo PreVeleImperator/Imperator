@@ -136,6 +136,21 @@ static void Material ()
 	}
 }
 
+static void EndgameRate ()
+{
+	const int changes [] = {0, 1, 1, 1, 1, 0};
+	endgameRate [WHITE] = endgameRate [BLACK] = 0;
+
+	for (int squareI = 0; squareI < 64; squareI ++)
+	{
+		int piece = board [squareI];
+
+		if (piece != NO_PIECE)
+			endgameRate [piece % 2] += changes [piece];
+	}
+}
+
+
 void Fen (string fen)
 {
 	Board      (fen);
@@ -146,4 +161,5 @@ void Fen (string fen)
 
 	PiecesPositions ();
 	Material        ();
+	EndgameRate     ();
 }

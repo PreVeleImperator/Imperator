@@ -24,7 +24,8 @@ constexpr int NO_END    =           1;
 constexpr int MAX_PLY         = 20;
 constexpr int PREVALUES_COUNT = 19;
 
-constexpr int materialChanges [] = {0, 0, 400, -400, 200, -200, 200, -200, 800, -800, 0, 0};
+constexpr int    materialChanges [] = {0, 0, 400, -400, 200, -200, 200, -200, 800, -800, 0, 0};
+constexpr int endgameRateChanges [] = {0, 1, 1, 1, 1, 0};
 
 
 bool playerToMoveAtStart;
@@ -42,6 +43,7 @@ uint64_t timeLimit = 20000;
 
 int fiftyMovesAtStart;
 int material;
+int endgameRate [2];
 
 int principalVariation [MAX_PLY] [MAX_PLY] [3];
 int pvLength           [MAX_PLY];

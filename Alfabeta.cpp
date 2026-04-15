@@ -30,6 +30,7 @@ int Alfabeta (bool player, bool opponent, uint64_t enpassant, int ply, int depth
 	PinnedPieces    (player, opponent, pinnedPieces   , check, doubleCheck, checkSquares);
 
 	GenerateMoves (player, opponent, enpassant, doubleCheck, checkSquares, pinnedPieces, attackedSquares, moves, movesCount);
+	OrderMoves    (ply   , depth   , moves    , movesCount);
 
 
 	if (int value = GameEnd (ply, check, movesCount); value != NO_END)
@@ -60,11 +61,14 @@ int Alfabeta (bool player, bool opponent, uint64_t enpassant, int ply, int depth
 		UnmakeMove (player, opponent, move);
 
 		if (value >= beta)
+		{
+			KillerMovesEntry (ply, move);
 			return beta;
+		}
 
 		if (value > alfa)
 		{
-			PvEntry (ply, move.fromI, move.toI, move.type);
+			PrincipalVariationEntry (ply, move);
 			alfa = value;
 		}
 	}

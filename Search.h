@@ -1,14 +1,20 @@
 #pragma once
-#include <array>
 #include "Move struct.h"
 using namespace std;
 
 
 enum {MOVE, PAWN_MOVE, PAWN_DOUBLE_MOVE, FIRST_K_ROOK_MOVE, FIRST_Q_ROOK_MOVE, FIRST_KING_MOVE, Q_CASTLING, K_CASTLING, Q_PROMOTION, N_PROMOTION, R_PROMOTION, B_PROMOTION};
 enum {FROM, TO, TYPE};
-enum {PREVALUE_PV, PREVALUE_HASH, PREVALUE_PROMOTION, PREVALUE_WINNING, PREVALUE_EQUAL = 11, PREVALUE_KILLER1, PREVALUE_KILLER2, PREVALUE_LOSING = 14, PREVALUE_QUIET = 18};
+enum {PREVALUE_PV, PREVALUE_HASH, PREVALUE_PROMOTION, PREVALUE_WINNING, PREVALUE_EQUAL = 11, PREVALUE_KILLER1, PREVALUE_KILLER2, PREVALUE_LOSING = 14, PREVALUE_OTHER = 18};
 
-constexpr array <array <int, 5>, 6> capturePreValues = CapturePreValues ();
+constexpr int capturePreValues [6] [5] = {
+	11,  7,  9,  9,  4,
+	15, 11, 14, 14,  7,
+	14,  9, 11, 11,  5,
+	14,  9, 11, 11,  5,
+	17, 15, 16, 16, 11,
+	10,  6,  8,  8,  3
+};
 
 constexpr int NO_MOVE   = -10'000'000;
 constexpr int CHECKMATE =  -1'000'000;
@@ -25,23 +31,25 @@ bool playerToMoveAtStart;
 bool     opponentAtStart;
 
 bool timeStop;
-
+					
 bool  kingMoved [2];
 bool qRookMoved [2];
 bool kRookMoved [2];
 
 uint64_t enpassantAtStart;
 uint64_t timeStart;
-uint64_t timeLimit = 10000;
+uint64_t timeLimit = 20000;
 
 int fiftyMovesAtStart;
 int material;
 
-int pv       [MAX_PLY] [MAX_PLY] [3];
-int pvLength [MAX_PLY];
+int principalVariation [MAX_PLY] [MAX_PLY] [3];
+int pvLength           [MAX_PLY];
+int killerMoves        [MAX_PLY] [2] [3];
 
 
-constexpr array <array <int, 5>, 6> CapturePreValues ();
+void GenerateCapturePreValues ();
+void OrderMoves (int ply, int depth, Move moves [], int movesCount);
 
 void GenerateMoves (bool player, bool opponent, uint64_t enpassant, bool doubleCheck, uint64_t checkSquares, uint64_t pinnedPieces [], uint64_t attackedSquares, Move moves [], 
 					int &movesCount);
@@ -54,7 +62,8 @@ void UnmakeMove (bool player, bool opponent, Move &move);
 
 void Search ();
 
-void PvEntry (int ply, int fromI, int toI, int type);
+void PrincipalVariationEntry (int ply, Move &move);
+void        KillerMovesEntry (int ply, Move &move);
 
 int Evaluate (bool player);
 

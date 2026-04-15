@@ -24,11 +24,12 @@ int BestMove (int depth)
 	PinnedPieces    (playerToMoveAtStart, opponentAtStart, pinnedPieces   , check, doubleCheck, checkSquares);
 
 	GenerateMoves (playerToMoveAtStart, opponentAtStart, enpassantAtStart, doubleCheck, checkSquares, pinnedPieces, attackedSquares, moves, movesCount);
+	OrderMoves    (0, depth, moves, movesCount);
 
 
 	for (int i = 0; i < movesCount; i ++)
 	{
-		if (GetTickCount64 () - timeStart >= timeLimit)
+		if (timeStop)
 			return 0;
 
 		Move &move = moves [i];
@@ -42,7 +43,7 @@ int BestMove (int depth)
 		
 		if (value > bestValue)
 		{
-			PvEntry (0, move.fromI, move.toI, move.type);
+			PrincipalVariationEntry (0, move);
 			bestValue = value;
 		}
 	}

@@ -41,7 +41,7 @@ void Search ()
 		cout << depth << " | " << GetTickCount64 () - timeStart << " | " << Value (value) << " | ";
 
 		for (int ply = 0; ply < pvLength [0]; ply ++)
-			cout << Coordinates (pv [0] [ply] [FROM]) << Coordinates (pv [0] [ply] [TO]) << " ";
+			cout << Coordinates (principalVariation [0] [ply] [FROM]) << Coordinates (principalVariation [0] [ply] [TO]) << " ";
 
 		cout << "\n";
 	}

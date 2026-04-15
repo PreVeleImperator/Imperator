@@ -14,7 +14,7 @@ int main ()
 {
 	Xoshiro256Seed (0x123456789ABCDEF);
 
-	while (false)
+	while (true)
 	{
 		string fen;
 		cout << "FEN: ";

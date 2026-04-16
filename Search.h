@@ -21,8 +21,8 @@ constexpr int CHECKMATE =  -1'000'000;
 constexpr int STALEMATE =           0;
 constexpr int NO_END    =           1;
 
-constexpr int MAX_PLY         = 20;
-constexpr int PREVALUES_COUNT = 19;
+constexpr int MAX_PLY         = 60;
+constexpr int PREVALUES_COUNT = 35;
 
 constexpr int    materialChanges [] = {0, 0, 400, -400, 200, -200, 200, -200, 800, -800, 0, 0};
 constexpr int endgameRateChanges [] = {0, 1, 1, 1, 1, 0};
@@ -71,6 +71,7 @@ int Evaluate (bool player);
 
 int BestMove (int depth);
 
-int Alfabeta (bool player, bool opponent, uint64_t enpassant, int ply, int depth, int alfa, int beta);
+int Alfabeta   (bool player, bool opponent, uint64_t enpassant, int ply, int depth, int alfa, int beta);
+int Quiescence (bool player, bool opponent, uint64_t enpassant, int ply, int alfa , int beta          );
 
 int GameEnd (int ply, bool check, int movesCount);

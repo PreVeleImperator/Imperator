@@ -33,12 +33,23 @@ int Alfabeta (bool player, bool opponent, uint64_t enpassant, int ply, int depth
 	OrderMoves    (ply   , depth   , moves    , movesCount);
 
 
+	// nullmoves
+	if (depth >= 4  &&  !check  &&  endgameRate [player])
+	{
+		int value = -Alfabeta (opponent, player, 0, ply + 1, depth / 3, -beta, 1 - beta);
+
+		if (value >= beta)
+			return beta;
+	}
+
+	// game end
 	if (int value = GameEnd (ply, check, movesCount); value != NO_END)
 	{
 		pvLength [ply] = ply;
 		return value;
 	}
 
+	// search end
 	if (depth <= 0)
 	{
 		pvLength [ply] = ply;

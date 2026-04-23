@@ -1,4 +1,4 @@
-#include "Pieces moves.h"
+#include "Moves.h"
 #include "Bits.h";
 
 void GenerateNonSlidingMoves (const int directions [], const uint64_t borders [], const int directionsCount)

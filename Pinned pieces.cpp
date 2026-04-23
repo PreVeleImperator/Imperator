@@ -4,7 +4,7 @@
 #include "Bits.h"
 #include "Search.h"
 #include "Pieces.h"
-#include "Pieces moves.h"
+#include "Moves.h"
 
 static void Piece (uint64_t myKingU, uint64_t myPieces, uint64_t evilPieces, uint64_t pinnedPieces [], bool &check, bool &doubleCheck, uint64_t &checkSquares, 
 				   const uint64_t combinations [], const int offsets [], uint64_t Moves1 (int square), uint64_t Moves2 (int square, uint64_t PieceException))

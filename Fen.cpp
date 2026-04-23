@@ -1,12 +1,11 @@
-#include <unordered_map>
 #include "Pieces.h"
 #include "Search.h"
 
 
 static void ToMove (string &fen)
 {
-	playerToMoveAtStart = (fen [0] == 'w') ? WHITE : BLACK;
-	    opponentAtStart = !playerToMoveAtStart;
+	  playerAtStart = (fen [0] == 'w') ? WHITE : BLACK;
+	opponentAtStart = !playerAtStart;
 
 	fen.erase (0, 2);
 }
@@ -138,7 +137,6 @@ static void Material ()
 
 static void EndgameRate ()
 {
-	const int changes [] = {0, 1, 1, 1, 1, 0};
 	endgameRate [WHITE] = endgameRate [BLACK] = 0;
 
 	for (int squareI = 0; squareI < 64; squareI ++)
@@ -146,7 +144,7 @@ static void EndgameRate ()
 		int piece = board [squareI];
 
 		if (piece != NO_PIECE)
-			endgameRate [piece % 2] += changes [piece];
+			endgameRate [piece % 2] += endgameRateChanges [piece];
 	}
 }
 

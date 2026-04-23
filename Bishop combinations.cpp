@@ -1,4 +1,4 @@
-#include "Pieces moves.h"
+#include "Moves.h"
 
 const uint64_t bishopCombinations [] = {
     0x40201008040200, 0x201008040200, 0x40001008040200, 0x1008040200, 0x40200008040200, 

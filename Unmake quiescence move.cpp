@@ -1,8 +1,7 @@
 #include "Search.h"
 #include "Pieces.h"
-#include "Castlings.h"
 
-void UnmakeMove (bool player, bool opponent, Move &move)
+void UnmakeQuiescenceMove (bool player, bool opponent, Move &move)
 {
 	uint64_t fromU = move.fromU;
 	uint64_t   toU = move.  toU;
@@ -12,7 +11,7 @@ void UnmakeMove (bool player, bool opponent, Move &move)
 	int fromI = move.fromI;
 	int   toI = move.  toI;
 
-	int         piece = move.        piece;
+	int piece         = move.piece;
 	int capturedPiece = move.capturedPiece;
 
 
@@ -62,49 +61,10 @@ void UnmakeMove (bool player, bool opponent, Move &move)
 
 			break;
 		}
-		case FIRST_KING_MOVE:
-		{
-			kingMoved [player] = false;
-			break;
-		}
-		case FIRST_K_ROOK_MOVE:
-		{
-			kRookMoved [player] = false;
-			break;
-		}
-		case FIRST_Q_ROOK_MOVE:
-		{
-			qRookMoved [player] = false;
-			break;
-		}
-		case K_CASTLING:
-		{
-			pieces [ROOK   [player]] ^= KCastling::RookMoveU [player];
-			pieces [PIECES [player]] ^= KCastling::RookMoveU [player];
-			pieces [ALL_PIECES     ] ^= KCastling::RookMoveU [player];
-
-			board [KCastling::RookFromI [player]] = ROOK [player];
-			board [KCastling::RookToI   [player]] = NO_PIECE;
-
-			kingMoved [player] = kRookMoved [player] = false;
-			break;
-		}
-		case Q_CASTLING:
-		{
-			pieces [ROOK   [player]] ^= QCastling::RookMoveU [player];
-			pieces [PIECES [player]] ^= QCastling::RookMoveU [player];
-			pieces [ALL_PIECES     ] ^= QCastling::RookMoveU [player];
-
-			board [QCastling::RookFromI [player]] = ROOK [player];
-			board [QCastling::RookToI   [player]] = NO_PIECE;
-
-			kingMoved [player] = qRookMoved [player] = false;
-			break;
-		}
 	}
 
 
-	board [fromI] = piece;
+	board [fromI] = board [toI];
 	board [  toI] = capturedPiece;
 
 	pieces [piece          ] ^= fromTo;
@@ -118,7 +78,6 @@ void UnmakeMove (bool player, bool opponent, Move &move)
 		pieces [PIECES [opponent]] ^= toU;
 		pieces [ALL_PIECES       ] ^= toU;
 
-		material               += piecesValues       [capturedPiece];
-		endgameRate [opponent] += endgameRateChanges [capturedPiece];
+		material += piecesValues [capturedPiece];
 	}
 }

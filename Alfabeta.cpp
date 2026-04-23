@@ -1,9 +1,10 @@
 #include <Windows.h>
 #include "Search.h"
 #include "Pieces.h"
-#include "Pieces moves.h"
+#include "Moves.h"
+#include "Transposition table.h"
 
-int Alfabeta (bool player, bool opponent, uint64_t enpassant, int ply, int depth, int alfa, int beta)
+int Alfabeta (bool player, bool opponent, uint64_t enpassant, int fiftyMoves, int ply, int depth, int alfa, int beta, bool nullMove)
 {
 	if (GetTickCount64 () - timeStart >= timeLimit)
 	{
@@ -13,10 +14,15 @@ int Alfabeta (bool player, bool opponent, uint64_t enpassant, int ply, int depth
 
 
 	uint64_t pinnedPieces [64];
+
 	uint64_t attackedSquares = 0;
 	uint64_t    checkSquares = FULL_UINT;
 
+	uint64_t trspTabCode  = TrspTab::PositionCode (playerAtStart);
+	uint64_t trspTabIndex = trspTabCode & (TrspTab::SIZE - 1);
+
 	int movesCount = 0;
+	int alfaInput  = alfa;
 
 	bool check       = false;
 	bool doubleCheck = false;
@@ -30,13 +36,17 @@ int Alfabeta (bool player, bool opponent, uint64_t enpassant, int ply, int depth
 	PinnedPieces    (player, opponent, pinnedPieces   , check, doubleCheck, checkSquares);
 
 	GenerateMoves (player, opponent, enpassant, doubleCheck, checkSquares, pinnedPieces, attackedSquares, moves, movesCount);
-	OrderMoves    (ply   , depth   , moves    , movesCount);
+	OrderMoves    (ply   , depth   , moves    , movesCount , trspTabIndex, trspTabCode);
 
+
+	// transposition table
+	if (int value = TrspTab::KnownPosition (trspTabIndex, trspTabCode, depth, alfa, beta); value != TrspTab::NO_ENTRY)
+		return value;
 
 	// nullmoves
-	if (depth >= 4  &&  !check  &&  endgameRate [player])
+	if (nullMove  &&  depth >= 4  &&  !check  &&  endgameRate [player])
 	{
-		int value = -Alfabeta (opponent, player, 0, ply + 1, depth / 3, -beta, 1 - beta);
+		int value = -Alfabeta (opponent, player, 0, 0, ply + 1, depth / 3, -beta, 1 - beta, false);
 
 		if (value >= beta)
 			return beta;
@@ -53,7 +63,7 @@ int Alfabeta (bool player, bool opponent, uint64_t enpassant, int ply, int depth
 	if (depth <= 0)
 	{
 		pvLength [ply] = ply;
-		return Evaluate (player);
+		return Quiescence (player, opponent, enpassant, ply, alfa, beta);
 	}
 
 
@@ -62,17 +72,23 @@ int Alfabeta (bool player, bool opponent, uint64_t enpassant, int ply, int depth
 		if (timeStop)
 			return 0;
 
-		Move &move = moves [i];
+		Move     &move            = moves [i];
+		bool      resetFiftyMoves = false;
+		uint64_t  nextEnpassant;
 
-		MakeMove (player, opponent, move);
+		MakeMove (player, opponent, nextEnpassant, resetFiftyMoves, move);
 		
-		int nextDepth = check ? depth : depth - 1;
-		int value     = -Alfabeta (opponent, player, 0, ply + 1, nextDepth, -beta, -alfa);
+		int nextDepth      = check           ? depth : depth      - 1;
+		int nextFiftyMoves = resetFiftyMoves ? 0     : fiftyMoves + 1;
+
+		int value = -Alfabeta (opponent, player, nextEnpassant, nextFiftyMoves, ply + 1, nextDepth, -beta, -alfa, true);
 
 		UnmakeMove (player, opponent, move);
 
 		if (value >= beta)
 		{
+			TrspTab::Entry (trspTabIndex, trspTabCode, value, TrspTab::CUT_NODE, depth, move.fromI, move.toI, move.type);
+
 			KillerMovesEntry (ply, move);
 			return beta;
 		}

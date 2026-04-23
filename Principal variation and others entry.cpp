@@ -2,15 +2,15 @@
 
 void PrincipalVariationEntry (int ply, Move &move)
 {
-	principalVariation [ply] [ply] [FROM] = move.fromI;
-	principalVariation [ply] [ply] [TO  ] = move.  toI;
-	principalVariation [ply] [ply] [TYPE] = move. type;
+	princVar [ply] [ply] [FROM] = move.fromI;
+	princVar [ply] [ply] [TO  ] = move.  toI;
+	princVar [ply] [ply] [TYPE] = move. type;
 
 	for (int i = ply + 1; i < pvLength [ply + 1]; i ++)
 	{
-		principalVariation [ply] [i] [FROM] = principalVariation [ply + 1] [i] [FROM];
-		principalVariation [ply] [i] [TO  ] = principalVariation [ply + 1] [i] [TO  ];
-		principalVariation [ply] [i] [TYPE] = principalVariation [ply + 1] [i] [TYPE];
+		princVar [ply] [i] [FROM] = princVar [ply + 1] [i] [FROM];
+		princVar [ply] [i] [TO  ] = princVar [ply + 1] [i] [TO  ];
+		princVar [ply] [i] [TYPE] = princVar [ply + 1] [i] [TYPE];
 	}
 
 	pvLength [ply] = pvLength [ply + 1];

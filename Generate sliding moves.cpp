@@ -2,7 +2,7 @@
 
 #include <fstream>
 #include "Pieces.h"
-#include "Pieces moves.h"
+#include "Moves.h"
 #include "Bits.h"
 
 void GenerateSlidingMoves (const int directions [], const uint64_t borders [], const uint64_t combinations [], const int combinationsCounts [], const int offsets [], const int shifts [], 

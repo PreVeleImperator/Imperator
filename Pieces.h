@@ -23,7 +23,7 @@ constexpr int QUEEN  [] = { 8,  9};
 constexpr int KING   [] = {10, 11};
 constexpr int PIECES [] = {12, 13};
 
-constexpr int piecesValues [] = {100, -100, 500, -500, 300, -300, 300, -300, 900, -900, 0, 0};
+constexpr int piecesValues     [] = {100, -100, 500, -500, 300, -300, 300, -300, 900, -900, 0, 0};
 
 constexpr int NO_PIECE   = -1;
 constexpr int ALL_PIECES = 14;

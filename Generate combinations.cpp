@@ -2,7 +2,7 @@
 
 
 #include <fstream>
-#include "Pieces moves.h"
+#include "Moves.h"
 #include "Bits.h"
 using namespace std;
 

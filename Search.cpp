@@ -8,7 +8,7 @@ using namespace std;
 static string Value (int value)
 {
 	string v;
-	value = playerToMoveAtStart ? -value : value;
+	value = playerAtStart ? -value : value;
 
 	if (value >= -CHECKMATE - MAX_PLY)
 	{
@@ -41,7 +41,7 @@ void Search ()
 		cout << depth << " | " << GetTickCount64 () - timeStart << " | " << Value (value) << " | ";
 
 		for (int ply = 0; ply < pvLength [0]; ply ++)
-			cout << Coordinates (principalVariation [0] [ply] [FROM]) << Coordinates (principalVariation [0] [ply] [TO]) << " ";
+			cout << Coordinates (princVar [0] [ply] [FROM]) << Coordinates (princVar [0] [ply] [TO]) << " ";
 
 		cout << "\n";
 	}

@@ -1,6 +1,6 @@
 #include "Search.h"
 
-void PrincipalVariationEntry (int ply, Move &move)
+void PrincVarEntry (int ply, Move &move)
 {
 	princVar [ply] [ply] [FROM] = move.fromI;
 	princVar [ply] [ply] [TO  ] = move.  toI;

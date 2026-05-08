@@ -6,7 +6,7 @@
 #include "Transposition table.h"
 
 
-enum {PRINC_VAR, TRSP_TAB, PROMOTION, WINNING_CAPTURE, EQUAL_CAPTURE = 11, KILLER_MOVE_1, KILLER_MOVE_2, LOSING_CAPTURE, OTHER = 18};
+enum {TRSP_TAB, PRINC_VAR, PROMOTION, WINNING_CAPTURE, EQUAL_CAPTURE = 11, KILLER_MOVE_1, KILLER_MOVE_2, LOSING_CAPTURE, OTHER = 18};
 
 constexpr int capturePreValues [6] [5] = {
 	11,  7,  9,  9,  4,
@@ -22,19 +22,16 @@ constexpr int PREVALUES_COUNT = 19;
 
 static int PreValue (int ply, int depth, Move &move, TrspTab::Table *trspTabEntry)
 {
+	// transposition table move
+	if (trspTabEntry)
+		if (trspTabEntry->fromI == move.fromI  &&  trspTabEntry->toI == move.toI  &&  trspTabEntry->moveType == move.type)
+			return TRSP_TAB;
+
 	// principal variation
 	if (depth >= 2)
-	{
-		auto &pv = princVar [0] [ply];
-
-		if (move.fromI == pv [FROM]  &&  move.toI == pv [TO]  &&  move.type == pv [TYPE])
+		if (move.fromI == princVar [0] [ply] [FROM]  &&  move.toI == princVar [0] [ply] [TO]  &&  move.type == princVar [0] [ply] [TYPE])
 			return PRINC_VAR;
-	}
-
-	// transposition table move
-	if (trspTabEntry  &&  trspTabEntry->fromI == move.fromI  &&  trspTabEntry->toI == move.toI  &&  trspTabEntry->moveType == move.type)
-		return TRSP_TAB;
-
+	
 	// promotion
 	if (move.type == Q_PROMOTION  ||  move.type == N_PROMOTION  ||  move.type == R_PROMOTION  ||  move.type == B_PROMOTION)
 		return PROMOTION;
@@ -45,27 +42,19 @@ static int PreValue (int ply, int depth, Move &move, TrspTab::Table *trspTabEntr
 
 	// killer move 1
 	if (depth >= 2  &&  ply >= 1)
-	{
-		auto &km = killerMoves [ply] [0];
-
-		if (move.fromI == km [FROM]  &&  move.toI == km [TO]  &&  move.type == km [TYPE])
+		if (move.fromI == killerMoves [ply] [0] [FROM]  &&  move.toI == killerMoves [ply] [0] [TO]  &&  move.type == killerMoves [ply] [0] [TYPE])
 			return KILLER_MOVE_1;
-	}
 
 	// killer move 2
 	if (depth >= 2  &&  ply >= 1)
-	{
-		auto &km = killerMoves [ply] [1];
-
-		if (move.fromI == km [FROM]  &&  move.toI == km [TO]  &&  move.type == km [TYPE])
+		if (move.fromI == killerMoves [ply] [1] [FROM]  &&  move.toI == killerMoves [ply] [1] [TO]  &&  move.type == killerMoves [ply] [1] [TYPE])
 			return KILLER_MOVE_2;
-	}
 
 	// other
 	return OTHER;
 }
 
-void OrderMoves (int ply, int depth, Move moves [], int movesCount, uint64_t trspTabIndex, uint64_t trspTabCode)
+void OrderMoves (int ply, int depth, Move moves [], int movesCount, uint64_t trspTabIndex)
 {
 	Move orderedMoves  [PREVALUES_COUNT] [250];
 	int  preValsCounts [PREVALUES_COUNT];
@@ -75,7 +64,7 @@ void OrderMoves (int ply, int depth, Move moves [], int movesCount, uint64_t trs
 		
 	fill (preValsCounts, preValsCounts + PREVALUES_COUNT, 0);
 
-	if (trspTabEntry->code != trspTabCode)
+	if (trspTabEntry->hashCode != actualPath [ply])
 		trspTabEntry = nullptr;
 
 

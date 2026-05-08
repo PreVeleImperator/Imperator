@@ -2,6 +2,9 @@
 #include <iostream>
 using namespace std;
 
+
+enum {WHITE, BLACK};
+
 enum
 {
 	A8, B8, C8, D8, E8, F8, G8, H8,
@@ -23,13 +26,13 @@ constexpr int QUEEN  [] = { 8,  9};
 constexpr int KING   [] = {10, 11};
 constexpr int PIECES [] = {12, 13};
 
-constexpr int piecesValues     [] = {100, -100, 500, -500, 300, -300, 300, -300, 900, -900, 0, 0};
-
 constexpr int NO_PIECE   = -1;
 constexpr int ALL_PIECES = 14;
 
-constexpr int WHITE = 0;
-constexpr int BLACK = 1;
+constexpr int piecesValues [] = {100, -100, 500, -500, 300, -300, 300, -300, 900, -900, 0, 0};
+
+constexpr uint64_t whiteSquares = 0xaa55aa55aa55aa55;
+constexpr uint64_t blackSquares = 0x55aa55aa55aa55aa;
 
 constexpr uint64_t FULL_UINT = 0xFFFF'FFFF'FFFF'FFFF;
 
@@ -39,6 +42,14 @@ constexpr char piecesChars [] = {'P', 'p', 'R', 'r', 'N', 'n', 'B', 'b', 'Q', 'q
 int board [64];
 
 uint64_t pieces [15];
+
+
+uint64_t *const PAWNS   [] = {&pieces [PAWN   [WHITE]], &pieces [PAWN   [BLACK]]};
+uint64_t *const ROOKS   [] = {&pieces [ROOK   [WHITE]], &pieces [ROOK   [BLACK]]};
+uint64_t *const KNIGHTS [] = {&pieces [KNIGHT [WHITE]], &pieces [KNIGHT [BLACK]]};
+uint64_t *const BISHOPS [] = {&pieces [BISHOP [WHITE]], &pieces [BISHOP [BLACK]]};
+uint64_t *const QUEENS  [] = {&pieces [QUEEN  [WHITE]], &pieces [QUEEN  [BLACK]]};
+uint64_t *const KINGS   [] = {&pieces [KING   [WHITE]], &pieces [KING   [BLACK]]};
 
 
 void Fen          (string fen);

@@ -5,9 +5,9 @@
 
 int Quiescence (bool player, bool opponent, uint64_t enpassant, int ply, int alfa, int beta)
 {
-	if (GetTickCount64 () - timeStart >= timeLimit)
+	if (GetAsyncKeyState (VK_SPACE) & 0x8000)
 	{
-		timeStop = true;
+		stopSearch = true;
 		return 0;
 	}
 
@@ -31,11 +31,12 @@ int Quiescence (bool player, bool opponent, uint64_t enpassant, int ply, int alf
 
 	if (check)
 	{
-		GenerateQuiescenceInCheckMoves (player, opponent, 0    , doubleCheck, checkSquares, pinnedPieces, attackedSquares, moves, movesCount);
-		                    OrderMoves (ply   , 0       , moves, movesCount, 0, 0);
+		GenerateQuiescenceInCheckMoves (player, opponent, 0, doubleCheck, checkSquares, pinnedPieces, attackedSquares, moves, movesCount);      
 
 		if (!movesCount)
 			return CHECKMATE + ply;
+
+		OrderMoves (ply, 0, moves, movesCount, 0);
 	}
 	else
 	{
@@ -44,17 +45,18 @@ int Quiescence (bool player, bool opponent, uint64_t enpassant, int ply, int alf
 		if (value >= beta) return beta;
 		if (value >  alfa) alfa = value;
 
-		GenerateQuiescenceMoves (player, opponent, 0    , pinnedPieces, attackedSquares, moves, movesCount);
-		   OrderQuiescenceMoves (ply   , 0       , moves, movesCount);
+		GenerateQuiescenceMoves (player, opponent, 0, pinnedPieces, attackedSquares, moves, movesCount);
 
 		if (!movesCount)
 			return value;
+
+		OrderQuiescenceMoves (ply, 0, moves, movesCount);
 	}
 
 
 	for (int i = 0; i < movesCount; i ++)
 	{
-		if (timeStop)
+		if (stopSearch)
 			return 0;
 
 		Move     &move = moves [i];
@@ -69,6 +71,7 @@ int Quiescence (bool player, bool opponent, uint64_t enpassant, int ply, int alf
 		if (value >= beta) return beta;
 		if (value >  alfa) alfa = value;
 	}
+
 
 	return alfa;
 }

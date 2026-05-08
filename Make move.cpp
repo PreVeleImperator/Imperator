@@ -2,6 +2,7 @@
 #include "Pieces.h"
 #include "Moves.h"
 #include "Castlings.h"
+#include "Transposition table.h"
 
 void MakeMove (bool player, bool opponent, uint64_t &enpassant, bool &resetFiftyMoves, Move &move)
 {
@@ -25,6 +26,10 @@ void MakeMove (bool player, bool opponent, uint64_t &enpassant, bool &resetFifty
 	pieces [ALL_PIECES     ] ^= fromTo;
 
 
+	actualHashCode ^= TrspTab::board [fromI] [piece];
+	actualHashCode ^= TrspTab::board [  toI] [piece];
+
+
 	if (capturedPiece != NO_PIECE)
 	{
 		pieces [capturedPiece    ] ^= toU;
@@ -33,6 +38,8 @@ void MakeMove (bool player, bool opponent, uint64_t &enpassant, bool &resetFifty
 
 		material               -= piecesValues       [capturedPiece];
 		endgameRate [opponent] -= endgameRateChanges [capturedPiece];
+
+		actualHashCode ^= TrspTab::board [toI] [capturedPiece];
 
 		resetFiftyMoves = true;
 	}
@@ -49,6 +56,10 @@ void MakeMove (bool player, bool opponent, uint64_t &enpassant, bool &resetFifty
 			pieces [PAWN  [player]] ^= toU;
 			pieces [QUEEN [player]] ^= toU;
 
+			actualHashCode ^= TrspTab::board [toI] [PAWN  [player]];
+			actualHashCode ^= TrspTab::board [toI] [QUEEN [player]];
+
+			resetFiftyMoves = true;
 			break;
 		}
 		case R_PROMOTION:
@@ -60,6 +71,10 @@ void MakeMove (bool player, bool opponent, uint64_t &enpassant, bool &resetFifty
 			pieces [PAWN [player]] ^= toU;
 			pieces [ROOK [player]] ^= toU;
 
+			actualHashCode ^= TrspTab::board [toI] [PAWN [player]];
+			actualHashCode ^= TrspTab::board [toI] [ROOK [player]];
+
+			resetFiftyMoves = true;
 			break;
 		}
 		case N_PROMOTION:
@@ -71,6 +86,10 @@ void MakeMove (bool player, bool opponent, uint64_t &enpassant, bool &resetFifty
 			pieces [PAWN   [player]] ^= toU;
 			pieces [KNIGHT [player]] ^= toU;
 
+			actualHashCode ^= TrspTab::board [toI] [PAWN   [player]];
+			actualHashCode ^= TrspTab::board [toI] [KNIGHT [player]];
+
+			resetFiftyMoves = true;
 			break;
 		}
 		case B_PROMOTION:
@@ -82,6 +101,10 @@ void MakeMove (bool player, bool opponent, uint64_t &enpassant, bool &resetFifty
 			pieces [PAWN   [player]] ^= toU;
 			pieces [BISHOP [player]] ^= toU;
 
+			actualHashCode ^= TrspTab::board [toI] [PAWN   [player]];
+			actualHashCode ^= TrspTab::board [toI] [BISHOP [player]];
+
+			resetFiftyMoves = true;
 			break;
 		}
 		case PAWN_MOVE:
@@ -120,6 +143,7 @@ void MakeMove (bool player, bool opponent, uint64_t &enpassant, bool &resetFifty
 			board [KCastling::RookToI   [player]] = ROOK [player];
 
 			kingMoved [player] = kRookMoved [player] = true;
+
 			break;
 		}
 		case Q_CASTLING:

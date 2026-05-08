@@ -3,6 +3,7 @@
 #include "Search.h"
 #include "Pieces.h"
 #include "Bits.h"
+#include "Transposition table.h"
 using namespace std;
 
 static string Value (int value)
@@ -28,14 +29,16 @@ static string Value (int value)
 
 void Search ()
 {
-	timeStart = GetTickCount64 ();
-	timeStop  = false;
+	timeStart  = GetTickCount64 ();
+	stopSearch = false;
+
+	actualPath [0] = actualHashCode = TrspTab::PositionCode (playerAtStart);
 
 	for (int depth = 1; depth < MAX_PLY; depth ++)
 	{
 		int value = BestMove (depth);
 
-		if (timeStop)
+		if (stopSearch)
 			return;
 
 		cout << depth << " | " << GetTickCount64 () - timeStart << " | " << Value (value) << " | ";
